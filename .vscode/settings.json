@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "mtlib": "cpp",
+        "vector": "cpp",
+        "*.tcc": "cpp",
+        "istream": "cpp",
+        "ostream": "cpp",
+        "typeinfo": "cpp"
+    }
+}
