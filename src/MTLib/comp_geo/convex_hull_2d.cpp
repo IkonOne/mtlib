@@ -1,4 +1,5 @@
 #include "convex_hull_2d.h" 
+#include "../math/eigen_helpers.h"
 
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
@@ -20,15 +21,10 @@ using namespace Eigen;
 namespace mtlib {
 
 // TODO: Refactor to general API
-inline double cross_2d(const Vector2d &lhs, const Vector2d &rhs) {
-    return lhs.coeff(0) * rhs.coeff(1) - lhs.coeff(1) * rhs.coeff(0);
-}
-
-// TODO: Refactor to general API
 // consider classifying ccw, cw and colinear
 // returns true if CCW, false if CW
 inline bool is_ccw(const Vector2d &p1, const Vector2d &p2, const Vector2d &p3) {
-    return cross_2d(p2 - p1, p3 - p1) >= 0;
+    return dot_perp(p2 - p1, p3 - p1) >= 0;
 }
 
 bool is_convex_2d(const vector<Vector2d> &hull) {
@@ -62,7 +58,7 @@ bool overlap_convex_point_2d(const vector<Vector2d> &hull, const Vector2d &p) {
     auto p2 = hull[mid];
 
     vector<Vector2d> sub_hull;
-    if (cross_2d(p2 - p1, p - p1) > 0)
+    if (dot_perp(p2 - p1, p - p1) > 0)
         copy(hull.begin(), hull.begin() + mid, sub_hull.begin());
     else
         copy(hull.begin() + (hull.size() > 4 ? mid : 1), hull.end(), sub_hull.begin());
