@@ -27,9 +27,8 @@ inline double cross_2d(const Vector2d &lhs, const Vector2d &rhs) {
 // TODO: Refactor to general API
 // consider classifying ccw, cw and colinear
 // returns true if CCW, false if CW
-// -0.0 is implementation defined.
 inline bool is_ccw(const Vector2d &p1, const Vector2d &p2, const Vector2d &p3) {
-    return !signbit(cross_2d(p2 - p1, p3 - p1));
+    return cross_2d(p2 - p1, p3 - p1) >= 0;
 }
 
 bool is_convex_2d(const vector<Vector2d> &hull) {
