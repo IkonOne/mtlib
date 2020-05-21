@@ -25,8 +25,9 @@ inline double cross_2d(const Vector2d &lhs, const Vector2d &rhs) {
 }
 
 // TODO: Refactor to general API
+// consider classifying ccw, cw and colinear
 // returns true if CCW, false if CW
-// Not numerically robust.
+// -0.0 is implementation defined.
 inline bool is_ccw(const Vector2d &p1, const Vector2d &p2, const Vector2d &p3) {
     return !signbit(cross_2d(p2 - p1, p3 - p1));
 }
@@ -68,6 +69,52 @@ bool overlap_convex_point_2d(const vector<Vector2d> &hull, const Vector2d &p) {
         copy(hull.begin() + (hull.size() > 4 ? mid : 1), hull.end(), sub_hull.begin());
 
     return overlap_convex_point_2d(sub_hull, p);
+}
+
+vector<Vector2d> chull_graham_2d(const vector<Vector2d> &points) {
+    assert(!points.empty());
+
+    vector<Vector2d> result;
+
+    if (points.size() <= 3) {
+        for (auto p : points)
+            result.push_back(p);
+        
+        if (result.size() == 3 && !is_ccw(result[0], result[1], result[2]))
+            swap(result[1], result[2]);
+        
+        return result;
+    }
+
+    vector<Vector2d> cp;
+    copy(points.begin(), points.end(), back_insert_iterator<vector<Vector2d>>(cp));
+
+    // lexicographic Vector2d Comparator
+    sort(cp.begin(), cp.end(), [](auto &lhs, auto &rhs) {
+        if (lhs.coeff(0) < rhs.coeff(0)) return true;
+        if (lhs.coeff(0) > rhs.coeff(0)) return false;
+        return lhs.coeff(1) < rhs.coeff(1);
+    });
+
+    // lower half of hull from far left
+    result.push_back(cp[0]);
+    result.push_back(cp[1]);
+    for (int i = 2; i < cp.size(); ++i) {
+        result.push_back(cp[i]);
+        while (result.size() >= 3 &&
+                !is_ccw(result[result.size() - 3], result[result.size() - 2], result[result.size() - 1]))
+            result.erase(result.begin() + result.size() - 2);
+    }
+
+    // upper half from far right
+    for (int i = cp.size() - 2; i > 0; --i) {
+        result.push_back(cp[i]);
+        while (result.size() >= 3 &&
+                !is_ccw(result[result.size() - 3], result[result.size() - 2], result[result.size() - 1]))
+            result.erase(result.begin() + result.size() - 2);
+    }
+
+    return result;
 }
 
 }

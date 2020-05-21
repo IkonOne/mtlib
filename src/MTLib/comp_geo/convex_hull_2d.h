@@ -10,8 +10,9 @@
 
 namespace mtlib {
 
-bool is_convex_2d(const std::vector<Eigen::Vector2d> &points);
+bool is_convex_2d(const std::vector<Eigen::Vector2d> &hull);
 bool overlap_convex_point_2d(const std::vector<Eigen::Vector2d> &hull, const Eigen::Vector2d &p);
+std::vector<Eigen::Vector2d> chull_graham_2d(const std::vector<Eigen::Vector2d> &points);
 
 }
 
