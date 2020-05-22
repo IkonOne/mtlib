@@ -1,5 +1,5 @@
 #include "convex_hull_2d.h" 
-#include "../math/eigen_helpers.h"
+#include "../algebra/eigen_helpers.h"
 
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
