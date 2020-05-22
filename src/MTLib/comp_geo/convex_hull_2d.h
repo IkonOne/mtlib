@@ -1,5 +1,5 @@
-#ifndef _MTLIB_CONVEX_HULL_2D_H_
-#define _MTLIB_CONVEX_HULL_2D_H_
+#ifndef _MTLIB_COMP_GEO_CONVEX_HULL_2D_H_
+#define _MTLIB_COMP_GEO_CONVEX_HULL_2D_H_
 
 #include <Eigen/Dense>
 

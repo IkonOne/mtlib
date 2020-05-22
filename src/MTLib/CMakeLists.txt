@@ -1,5 +1,5 @@
-add_subdirectory(comp_geo)
 add_subdirectory(algebra)
+add_subdirectory(comp_geo)
 
 add_library(mtlib)
 target_link_libraries(mtlib

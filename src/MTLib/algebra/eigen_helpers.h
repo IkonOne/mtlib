@@ -1,5 +1,5 @@
-#ifndef _EIGEN_HELPERS_H_
-#define _EIGEN_HELPERS_H_
+#ifndef _MTLIB_ALGEBRA_EIGEN_HELPERS_H_
+#define _MTLIB_ALGEBRA_EIGEN_HELPERS_H_
 
 #include <Eigen/Dense>
 
@@ -9,4 +9,4 @@ double dot_perp(const Eigen::Vector2d &v1, const Eigen::Vector2d &v2);
 
 }   // mtlib
 
-#endif // _EIGEN_HELPERS_H_
+#endif // _MTLIB_ALGEBRA_EIGEN_HELPERS_H_
