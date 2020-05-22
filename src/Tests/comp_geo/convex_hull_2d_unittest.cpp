@@ -143,19 +143,19 @@ TEST(CHullGraham2dDeathTest, Empty) {
     vector<Vector2d> empty_points;
 
     EXPECT_DEBUG_DEATH({
-        chull_graham_2d(empty_points);
-    }, "!points.empty()");
+        chull_graham_2d(empty_points.begin(), empty_points.end());
+    }, "distance\\(first, last\\) > 0");
 }
 
 TEST(CHullGraham2dTest, MinHullSize) {
     vector<Vector2d> points;
     points.emplace_back(0, 0);
 
-    auto hull = chull_graham_2d(points);
+    auto hull = chull_graham_2d(points.begin(), points.end());
     ASSERT_EQ(1, hull.size());
 
     points.emplace_back(1, 0);
-    hull = chull_graham_2d(points);
+    hull = chull_graham_2d(points.begin(), points.end());
     ASSERT_EQ(2, hull.size());
 }
 
@@ -165,7 +165,7 @@ TEST(CHullGraham2dTest, ThreeHull) {
     points.emplace_back(1, 1);
     points.emplace_back(1, 0);
 
-    auto hull = chull_graham_2d(points);
+    auto hull = chull_graham_2d(points.begin(), points.end());
     EXPECT_EQ(3, hull.size());
     EXPECT_TRUE(is_convex_2d(hull));
 }
@@ -177,8 +177,20 @@ TEST(CHullGraham2dTest, QuadCW) {
     quad_cw.emplace_back(1, 1);
     quad_cw.emplace_back(1, 0);
 
-    auto hull = chull_graham_2d(quad_cw);
+    auto hull = chull_graham_2d(quad_cw.begin(), quad_cw.end());
     EXPECT_EQ(4, hull.size());
+    EXPECT_TRUE(is_convex_2d(hull));
+}
+
+TEST(CHullGraham2dTest, EdgeCase1) {
+    vector<Vector2d> points;
+    points.emplace_back(-1, 0);
+    points.emplace_back(0, -1);
+    points.emplace_back(0, 0);
+    points.emplace_back(1, 1);
+
+    auto hull = chull_graham_2d(points.begin(), points.end());
+    EXPECT_EQ(3, hull.size());
     EXPECT_TRUE(is_convex_2d(hull));
 }
 
@@ -188,10 +200,8 @@ TEST(CHullGraham2dTest, Grid3x3) {
     grid.emplace_back(-1, 0); grid.emplace_back(0, 0); grid.emplace_back(1, 0);
     grid.emplace_back(-1, -1); grid.emplace_back(0, -1); grid.emplace_back(1, -1);
 
-    auto hull = chull_graham_2d(grid);
-    // FIXME: is_ccw returns true when ccw AND colinear.  therefore hull.size() == 8
-    // EXPECT_EQ(4, hull.size());
-    EXPECT_LE(4, hull.size());
+    auto hull = chull_graham_2d(grid.begin(), grid.end());
+    EXPECT_EQ(4, hull.size());
     EXPECT_TRUE(is_convex_2d(hull));
 }
 
