@@ -19,6 +19,9 @@ struct dim_size_equal {
 };
 
 public:
+    using scalar_type = Scalar;
+
+public:
     vec() = default;
 
     vec(std::array<Scalar, N> l)
