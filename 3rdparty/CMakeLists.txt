@@ -1,10 +1,8 @@
 cmake_minimum_required(VERSION 3.13)
 
-find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 add_subdirectory(googletest)
 
 list(APPEND 3RD_PARTY_INCLUDE_DIRS
-    ${EIGEN3_INCLUDE_DIRS}
     PARENT_SCOPE
 )
 set(3RD_PARTY_INCLUDE_DIRS ${3RD_PARTY_INCLUDE_DIRS} PARENT_SCOPE)

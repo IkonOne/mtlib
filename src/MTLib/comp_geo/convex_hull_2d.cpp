@@ -1,8 +1,7 @@
 #include "convex_hull_2d.h" 
-#include "../algebra/eigen_helpers.h"
 
-#include <Eigen/Dense>
-#include <Eigen/Geometry>
+#include "MTLib/algebra/linalg.h"
+#include "MTLib/algebra/vec.h"
 
 #include <algorithm>
 #include <cassert>
@@ -12,7 +11,6 @@
 #include <iostream>
 
 using namespace std;
-using namespace Eigen;
 
 /**
  * Counter-Clockwise Winding
@@ -23,11 +21,11 @@ namespace mtlib {
 // TODO: Refactor to general API
 // consider classifying ccw, cw and colinear
 // returns true if CCW, false if CW
-inline bool is_ccw(const Vector2d &p1, const Vector2d &p2, const Vector2d &p3) {
+inline bool is_ccw(const vec2d &p1, const vec2d &p2, const vec2d &p3) {
     return dot_perp(p2 - p1, p3 - p1) >= 0;
 }
 
-bool is_convex_2d(const vector<Vector2d> &hull) {
+bool is_convex_2d(const vector<vec2d> &hull) {
     assert(!hull.empty());
 
     if (hull.size() < 3)
@@ -41,7 +39,7 @@ bool is_convex_2d(const vector<Vector2d> &hull) {
     return true;
 }
 
-bool overlap_convex_point_2d(const vector<Vector2d> &hull, const Vector2d &p) {
+bool overlap_convex_point_2d(const vector<vec2d> &hull, const vec2d &p) {
     assert(hull.size() >= 3);
     assert(is_convex_2d(hull));
 
@@ -57,7 +55,7 @@ bool overlap_convex_point_2d(const vector<Vector2d> &hull, const Vector2d &p) {
     auto p1 = hull[0];
     auto p2 = hull[mid];
 
-    vector<Vector2d> sub_hull;
+    vector<vec2d> sub_hull;
     if (dot_perp(p2 - p1, p - p1) > 0)
         copy(hull.begin(), hull.begin() + mid, sub_hull.begin());
     else

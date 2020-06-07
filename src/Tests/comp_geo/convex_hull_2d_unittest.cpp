@@ -1,19 +1,17 @@
 #include <MTLib/mtlib.h>
 
-#include <Eigen/Dense>
 #include <gtest/gtest.h>
 
 #include <iostream>
 #include <vector>
 
 using namespace std;
-using namespace Eigen;
 using namespace mtlib;
 
 namespace {
 
 TEST(IsConvex2dPHullDeathTest, ZeroPoints) {
-    vector<Vector2d> empty_hull;
+    vector<vec2d> empty_hull;
 
     ASSERT_DEATH({
         is_convex_2d(empty_hull);
@@ -21,14 +19,14 @@ TEST(IsConvex2dPHullDeathTest, ZeroPoints) {
 }
 
 TEST(IsConvex2dPHullTest, Point) {
-    vector<Vector2d> point;
+    vector<vec2d> point;
     point.emplace_back(0, 1);
 
     EXPECT_TRUE(is_convex_2d(point));
 }
 
 TEST(IsConvex2dPHullTest, Line) {
-    vector<Vector2d> line;
+    vector<vec2d> line;
     line.emplace_back(0, 1);
     line.emplace_back(1, 0);
 
@@ -36,7 +34,7 @@ TEST(IsConvex2dPHullTest, Line) {
 }
 
 TEST(IsConvex2dPHullTest, TriangleCWFails) {
-    vector<Vector2d> tri_cw;
+    vector<vec2d> tri_cw;
     tri_cw.emplace_back(0, 0);
     tri_cw.emplace_back(0, 1);
     tri_cw.emplace_back(1, 1);
@@ -45,7 +43,7 @@ TEST(IsConvex2dPHullTest, TriangleCWFails) {
 }
 
 TEST(IsConvex2dPHullTest, TriangleCCW) {
-    vector<Vector2d> tri_ccw;
+    vector<vec2d> tri_ccw;
     tri_ccw.emplace_back(0, 0);
     tri_ccw.emplace_back(1, 0);
     tri_ccw.emplace_back(1, 1);
@@ -54,7 +52,7 @@ TEST(IsConvex2dPHullTest, TriangleCCW) {
 }
 
 TEST(IsConvex2dPHullTest, QuadCWFails) {
-    vector<Vector2d> quad_cw;
+    vector<vec2d> quad_cw;
     quad_cw.emplace_back(0, 0);
     quad_cw.emplace_back(0, 1);
     quad_cw.emplace_back(1, 1);
@@ -64,7 +62,7 @@ TEST(IsConvex2dPHullTest, QuadCWFails) {
 }
 
 TEST(IsConvex2dPHullTest, QuadCCW) {
-    vector<Vector2d> quad_ccw;
+    vector<vec2d> quad_ccw;
     quad_ccw.emplace_back(0, 0);
     quad_ccw.emplace_back(1, 0);
     quad_ccw.emplace_back(1, 1);
@@ -84,7 +82,7 @@ TEST(IsConvex2dPHullTest, BowTieFails) {
      * (0,0)*-----*(1,0)
      */
 
-    vector<Vector2d> bow_tie;
+    vector<vec2d> bow_tie;
     bow_tie.emplace_back(0, 0);
     bow_tie.emplace_back(1, 0);
     bow_tie.emplace_back(0, 1);
@@ -94,11 +92,11 @@ TEST(IsConvex2dPHullTest, BowTieFails) {
 }
 
 TEST(OverlapConvexPoint2dDeathTest, MinHullSize) {
-    vector<Vector2d> hull;
+    vector<vec2d> hull;
     hull.emplace_back(0, 0);
     hull.emplace_back(1, 0);
 
-    Vector2d p(0, 0);
+    vec2d p(0, 0);
 
     EXPECT_DEATH({
         overlap_convex_point_2d(hull, p);
@@ -111,13 +109,13 @@ TEST(OverlapConvexPoint2dDeathTest, MinHullSize) {
 }
 
 TEST(OverlapConvexPoint2dDeathTest, NonConvex) {
-    vector<Vector2d> non_convex;
+    vector<vec2d> non_convex;
     non_convex.emplace_back(0, 0);
     non_convex.emplace_back(1, 0);
     non_convex.emplace_back(0, 1);
     non_convex.emplace_back(1, 1);
 
-    Vector2d p;
+    vec2d p;
 
     EXPECT_DEATH({
         overlap_convex_point_2d(non_convex, p);
@@ -125,14 +123,14 @@ TEST(OverlapConvexPoint2dDeathTest, NonConvex) {
 }
 
 TEST(OverlapConvexPoint2dTest, BaseCaseTriPoint) {
-    vector<Vector2d> tri;
+    vector<vec2d> tri;
     tri.emplace_back(0, 0);
     tri.emplace_back(1, 0);
     tri.emplace_back(1, 1);
 
-    Vector2d p_in(0.5, 0.25);
-    Vector2d p_out(5, 5);
-    Vector2d p_on(0, 0);
+    vec2d p_in(0.5, 0.25);
+    vec2d p_out(5, 5);
+    vec2d p_on(0, 0);
 
     EXPECT_TRUE(overlap_convex_point_2d(tri, p_in));
     EXPECT_FALSE(overlap_convex_point_2d(tri, p_out));
@@ -140,7 +138,7 @@ TEST(OverlapConvexPoint2dTest, BaseCaseTriPoint) {
 }
 
 TEST(CHullGraham2dDeathTest, Empty) {
-    vector<Vector2d> empty_points;
+    vector<vec2d> empty_points;
 
     EXPECT_DEBUG_DEATH({
         chull_graham_2d(empty_points.begin(), empty_points.end());
@@ -148,7 +146,7 @@ TEST(CHullGraham2dDeathTest, Empty) {
 }
 
 TEST(CHullGraham2dTest, MinHullSize) {
-    vector<Vector2d> points;
+    vector<vec2d> points;
     points.emplace_back(0, 0);
 
     auto hull = chull_graham_2d(points.begin(), points.end());
@@ -160,7 +158,7 @@ TEST(CHullGraham2dTest, MinHullSize) {
 }
 
 TEST(CHullGraham2dTest, ThreeHull) {
-    vector<Vector2d> points;
+    vector<vec2d> points;
     points.emplace_back(0, 0);
     points.emplace_back(1, 1);
     points.emplace_back(1, 0);
@@ -171,7 +169,7 @@ TEST(CHullGraham2dTest, ThreeHull) {
 }
 
 TEST(CHullGraham2dTest, QuadCW) {
-    vector<Vector2d> quad_cw;
+    vector<vec2d> quad_cw;
     quad_cw.emplace_back(0, 0);
     quad_cw.emplace_back(0, 1);
     quad_cw.emplace_back(1, 1);
@@ -183,7 +181,7 @@ TEST(CHullGraham2dTest, QuadCW) {
 }
 
 TEST(CHullGraham2dTest, EdgeCase1) {
-    vector<Vector2d> points;
+    vector<vec2d> points;
     points.emplace_back(-1, 0);
     points.emplace_back(0, -1);
     points.emplace_back(0, 0);
@@ -195,7 +193,7 @@ TEST(CHullGraham2dTest, EdgeCase1) {
 }
 
 TEST(CHullGraham2dTest, Grid3x3) {
-    vector<Vector2d> grid;
+    vector<vec2d> grid;
     grid.emplace_back(-1, 1); grid.emplace_back(0, 1); grid.emplace_back(1, 1);
     grid.emplace_back(-1, 0); grid.emplace_back(0, 0); grid.emplace_back(1, 0);
     grid.emplace_back(-1, -1); grid.emplace_back(0, -1); grid.emplace_back(1, -1);

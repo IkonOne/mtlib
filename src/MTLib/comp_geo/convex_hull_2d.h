@@ -1,9 +1,8 @@
 #ifndef _MTLIB_COMP_GEO_CONVEX_HULL_2D_H_
 #define _MTLIB_COMP_GEO_CONVEX_HULL_2D_H_
 
-#include "../algebra/eigen_helpers.h"
-
-#include <Eigen/Dense>
+#include "MTLib/algebra/vec.h"
+#include "MTLib/algebra/linalg.h"
 
 #include <cassert>
 #include <iostream>
@@ -13,19 +12,19 @@
 
 namespace mtlib {
 
-bool is_convex_2d(const std::vector<Eigen::Vector2d> &hull);
-bool overlap_convex_point_2d(const std::vector<Eigen::Vector2d> &hull, const Eigen::Vector2d &p);
+bool is_convex_2d(const std::vector<vec2d>& hull);
+bool overlap_convex_point_2d(const std::vector<vec2d>& hull, const vec2d& p);
 
 template <typename RandomIt>
-std::vector<Eigen::Vector2d> chull_graham_2d(RandomIt first, RandomIt last) {
+std::vector<vec2d> chull_graham_2d(RandomIt first, RandomIt last) {
     assert(distance(first, last) > 0);
 
-    auto is_ccw = [](const Eigen::Vector2d &v1, const Eigen::Vector2d &v2, const Eigen::Vector2d &v3) {
-        return dot_perp(v2 - v1, v3 - v1) > 0;
-    };
+    // auto is_ccw = [](const vec2d& v1, const vec2d& v2, const vec2d& v3) {
+    //     return dot_perp(v2 - v1, v3 - v1) > 0;
+    // };
 
     int n = distance(first, last);
-    std::vector<Eigen::Vector2d> result;
+    std::vector<vec2d> result;
 
     if (n <= 3) {
         for (; first != last; ++first)
@@ -35,13 +34,13 @@ std::vector<Eigen::Vector2d> chull_graham_2d(RandomIt first, RandomIt last) {
             iter_swap(result.begin(), result.begin() + 1);
     }
     else {
-        std::vector<Eigen::Vector2d> cp(n);
+        std::vector<vec2d> cp(n);
         copy(first, last, cp.begin());
         sort(cp.begin(), cp.end(), [](auto lhs, auto rhs) {
             // lexicographic
-            if (lhs.coeff(0) < rhs.coeff(0)) return true;
-            if (lhs.coeff(0) > rhs.coeff(0)) return false;
-            return lhs.coeff(1) < rhs.coeff(1);
+            if (lhs[0] < rhs[0]) return true;
+            if (lhs[0] > rhs[0]) return false;
+            return lhs[1] < rhs[1];
         });
 
         // bottom hull
@@ -54,7 +53,7 @@ std::vector<Eigen::Vector2d> chull_graham_2d(RandomIt first, RandomIt last) {
         }
 
         // top hull
-        std::vector<Eigen::Vector2d> rtop;
+        std::vector<vec2d> rtop;
         rtop.push_back(cp[cp.size() - 1]);
         rtop.push_back(cp[cp.size() - 2]);
         for (int i = cp.size() - 3; i >= 0; --i) {
