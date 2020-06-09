@@ -19,18 +19,20 @@ struct dim_size_equal {
 };
 
 public:
+    static constexpr std::size_t rank = N;
     using scalar_type = Scalar;
+    using value_type = scalar_type;
 
 public:
-    vec() = default;
+    constexpr vec() = default;
 
-    vec(std::array<Scalar, N> l)
+    constexpr vec(std::array<Scalar, N> l)
         : vals(l)
     {}
 
     // vec2 constructor
     template <std::size_t Dim = N>
-    vec(const Scalar& s1, const Scalar& s2,
+    constexpr vec(const Scalar& s1, const Scalar& s2,
         typename std::enable_if< dim_size_equal<Dim, 2>::value >::type* = 0
     )
         : vals({ s1, s2 })
@@ -38,7 +40,7 @@ public:
 
     // vec3 constructor
     template <std::size_t Dim = N>
-    vec(const Scalar& s1, const Scalar& s2, const Scalar& s3,
+    constexpr vec(const Scalar& s1, const Scalar& s2, const Scalar& s3,
         typename std::enable_if< dim_size_equal<Dim, 3>::value >::type* = 0
     )
         : vals({ s1, s2, s3 })
@@ -46,26 +48,26 @@ public:
 
     // vec4 constructor
     template <std::size_t Dim = N>
-    vec(const Scalar& s1, const Scalar& s2, const Scalar& s3, const Scalar& s4,
+    constexpr vec(const Scalar& s1, const Scalar& s2, const Scalar& s3, const Scalar& s4,
         typename std::enable_if< dim_size_equal<Dim, 4>::value >::type* = 0
     )
         : vals({ s1, s2, s3, s4 })
     { }
 
     // accessors
-    inline Scalar& at(std::size_t idx) { return vals.at(idx); }
-    inline const Scalar& at(std::size_t idx) const { return vals.at(idx); }
+    constexpr Scalar& at(std::size_t idx) { return vals.at(idx); }
+    constexpr const Scalar& at(std::size_t idx) const { return vals.at(idx); }
 
-    inline Scalar& operator[](std::size_t idx) { return vals[idx]; }
-    inline const Scalar& operator[](std::size_t idx) const { return vals[idx]; }
+    constexpr Scalar& operator[](std::size_t idx) { return vals[idx]; }
+    constexpr const Scalar& operator[](std::size_t idx) const { return vals[idx]; }
 
     // lexicographic comparisons
-    inline bool operator==(const vec& rhs) { return vals == rhs.vals; }
-    inline bool operator!=(const vec& rhs) { return vals != rhs.vals; }
-    inline bool operator<(const vec& rhs) { return vals < rhs.vals; }
-    inline bool operator<=(const vec& rhs) { return vals <= rhs.vals; }
-    inline bool operator>(const vec& rhs) { return vals > rhs.vals; }
-    inline bool operator>=(const vec& rhs) { return vals >= rhs.vals; }
+    constexpr bool operator==(const vec& rhs) const { return vals == rhs.vals; }
+    constexpr bool operator!=(const vec& rhs) const { return vals != rhs.vals; }
+    constexpr bool operator< (const vec& rhs) const { return vals <  rhs.vals; }
+    constexpr bool operator<=(const vec& rhs) const { return vals <= rhs.vals; }
+    constexpr bool operator> (const vec& rhs) const { return vals >  rhs.vals; }
+    constexpr bool operator>=(const vec& rhs) const { return vals >= rhs.vals; }
 
 private:
     std::array<Scalar, N> vals;
@@ -92,12 +94,12 @@ using vec4l = vec4<long double>;
 
 // Linear Algebra
 template <std::size_t N, typename Scalar>
-inline vec<N, Scalar> dot(const vec<N, Scalar>& lhs, const vec<N, Scalar>& rhs) {
+constexpr vec<N, Scalar> dot(const vec<N, Scalar>& lhs, const vec<N, Scalar>& rhs) {
     return lhs * rhs;
 }
 
 template <typename Scalar>
-inline vec3<Scalar> cross(const vec3<Scalar>& lhs, const vec3<Scalar>& rhs) {
+constexpr vec3<Scalar> cross(const vec3<Scalar>& lhs, const vec3<Scalar>& rhs) {
     return vec3<Scalar>({
         lhs[1] * rhs[2] - lhs[2] * rhs[1],
         lhs[2] * rhs[0] - lhs[0] * rhs[2],
@@ -106,29 +108,29 @@ inline vec3<Scalar> cross(const vec3<Scalar>& lhs, const vec3<Scalar>& rhs) {
 }
 
 template <typename Scalar>
-inline Scalar dot_perp(const vec2<Scalar>& lhs, const vec2<Scalar>& rhs) {
+constexpr Scalar dot_perp(const vec2<Scalar>& lhs, const vec2<Scalar>& rhs) {
     return lhs[0] * rhs[1] - lhs[1] * rhs[0];
 }
 
 template <std::size_t N, typename Scalar>
-inline Scalar length_sqr(const vec<N, Scalar>& v) {
+constexpr Scalar length_sqr(const vec<N, Scalar>& v) {
     return dot(v, v);
 }
 
 template <std::size_t N, typename Scalar>
-inline Scalar length(const vec<N, Scalar>& v) {
+constexpr Scalar length(const vec<N, Scalar>& v) {
     return std::sqrt(length_sqr(v));
 }
 
 
 // unary arithmetic operators
 template <std::size_t N, typename Scalar>
-inline vec<N, Scalar> operator+(const vec<N, Scalar>& rhs) {
+constexpr vec<N, Scalar> operator+(const vec<N, Scalar>& rhs) {
     return rhs;
 }
 
 template <std::size_t N, typename Scalar>
-inline vec<N, Scalar> operator-(const vec<N, Scalar>& rhs) {
+constexpr vec<N, Scalar> operator-(const vec<N, Scalar>& rhs) {
     auto result = rhs;
     for (int i = 0; i < N; ++i)
         result[i] = -result[i];
@@ -137,12 +139,12 @@ inline vec<N, Scalar> operator-(const vec<N, Scalar>& rhs) {
 
 // elementwise binary arithmetic operators
 template <std::size_t N, typename Scalar>
-inline vec<N, Scalar> operator+(const vec<N, Scalar>& lhs, const vec<N, Scalar>& rhs) {
+constexpr vec<N, Scalar> operator+(const vec<N, Scalar>& lhs, const vec<N, Scalar>& rhs) {
     return lhs += rhs;
 }
 
 template <std::size_t N, typename Scalar>
-inline vec<N, Scalar> operator+=(const vec<N, Scalar>& lhs, const vec<N, Scalar>& rhs) {
+constexpr vec<N, Scalar> operator+=(const vec<N, Scalar>& lhs, const vec<N, Scalar>& rhs) {
     auto result = lhs;
     for (int i = 0; i < N; ++i)
         result[i] += rhs[i];
@@ -150,12 +152,12 @@ inline vec<N, Scalar> operator+=(const vec<N, Scalar>& lhs, const vec<N, Scalar>
 }
 
 template <std::size_t N, typename Scalar>
-inline vec<N, Scalar> operator-(const vec<N, Scalar>& lhs, const vec<N, Scalar>& rhs) {
+constexpr vec<N, Scalar> operator-(const vec<N, Scalar>& lhs, const vec<N, Scalar>& rhs) {
     return lhs -= rhs;
 }
 
 template <std::size_t N, typename Scalar>
-inline vec<N, Scalar> operator-=(const vec<N, Scalar>& lhs, const vec<N, Scalar>& rhs) {
+constexpr vec<N, Scalar> operator-=(const vec<N, Scalar>& lhs, const vec<N, Scalar>& rhs) {
     auto result = lhs;
     for (int i = 0; i < N; ++i)
         result[i] -= rhs[i];
@@ -163,12 +165,12 @@ inline vec<N, Scalar> operator-=(const vec<N, Scalar>& lhs, const vec<N, Scalar>
 }
 
 template <std::size_t N, typename Scalar>
-inline vec<N, Scalar> operator*(const vec<N, Scalar>& lhs, const vec<N, Scalar>& rhs) {
+constexpr vec<N, Scalar> operator*(const vec<N, Scalar>& lhs, const vec<N, Scalar>& rhs) {
     return lhs *= rhs;
 }
 
 template <std::size_t N, typename Scalar>
-inline vec<N, Scalar> operator*=(const vec<N, Scalar>& lhs, const vec<N, Scalar>& rhs) {
+constexpr vec<N, Scalar> operator*=(const vec<N, Scalar>& lhs, const vec<N, Scalar>& rhs) {
     auto result = lhs;
     for (int i = 0; i < N; ++i)
         result[i] *= rhs[i];
@@ -176,12 +178,12 @@ inline vec<N, Scalar> operator*=(const vec<N, Scalar>& lhs, const vec<N, Scalar>
 }
 
 template <std::size_t N, typename Scalar>
-inline vec<N, Scalar> operator/(const vec<N, Scalar>& lhs, const vec<N, Scalar>& rhs) {
+constexpr vec<N, Scalar> operator/(const vec<N, Scalar>& lhs, const vec<N, Scalar>& rhs) {
     return lhs /= rhs;
 }
 
 template <std::size_t N, typename Scalar>
-inline vec<N, Scalar> operator/=(const vec<N, Scalar>& lhs, const vec<N, Scalar>& rhs) {
+constexpr vec<N, Scalar> operator/=(const vec<N, Scalar>& lhs, const vec<N, Scalar>& rhs) {
     auto result = lhs;
     for (int i = 0; i < N; ++i)
         result[i] /= rhs[i];
@@ -190,12 +192,12 @@ inline vec<N, Scalar> operator/=(const vec<N, Scalar>& lhs, const vec<N, Scalar>
 
 // binary scalar arithmetic operators
 template <std::size_t N, typename Scalar>
-inline vec<N, Scalar> operator*(const vec<N, Scalar>& v, Scalar scalar) {
+constexpr vec<N, Scalar> operator*(const vec<N, Scalar>& v, Scalar scalar) {
     return v *= scalar;
 }
 
 template <std::size_t N, typename Scalar>
-inline vec<N, Scalar> operator*=(const vec<N, Scalar>& v, Scalar scalar) {
+constexpr vec<N, Scalar> operator*=(const vec<N, Scalar>& v, Scalar scalar) {
     auto result = v;
     for (int i = 0; i < N; ++i)
         result[i] *= scalar;
@@ -203,12 +205,12 @@ inline vec<N, Scalar> operator*=(const vec<N, Scalar>& v, Scalar scalar) {
 }
 
 template <std::size_t N, typename Scalar>
-inline vec<N, Scalar> operator/(const vec<N, Scalar>& v, Scalar scalar) {
+constexpr vec<N, Scalar> operator/(const vec<N, Scalar>& v, Scalar scalar) {
     return v /= scalar;
 }
 
 template <std::size_t N, typename Scalar>
-inline vec<N, Scalar> operator/=(const vec<N, Scalar>& v, Scalar scalar) {
+constexpr vec<N, Scalar> operator/=(const vec<N, Scalar>& v, Scalar scalar) {
     auto result = v;
     for (int i = 0; i < N; ++i)
         result[i] /= scalar;

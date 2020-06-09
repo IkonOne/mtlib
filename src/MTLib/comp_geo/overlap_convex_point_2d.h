@@ -18,7 +18,7 @@ bool overlap_convex_point_2d(const RandomIt& first, const RandomIt& last, const 
     int n = std::distance(first, last);
 
     auto ccw_or_colinear = [](const vec2<Scalar>& v1, const vec2<Scalar>& v2, const vec2<Scalar>& v3) {
-        return orientation(v1, v2, v3) >= 0;
+        return signed_area_2D(v1, v2, v3) >= 0;
     };
 
     if (n == 3) {
