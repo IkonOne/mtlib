@@ -24,8 +24,7 @@ public:
     using value_type = scalar_type;
 
 public:
-    constexpr vec() = default;
-
+    constexpr vec() { /* vals uninitialized */ }
     constexpr vec(std::array<Scalar, N> l)
         : vals(l)
     {}
@@ -92,6 +91,20 @@ using vec4f = vec4<float>;
 using vec4d = vec4<double>;
 using vec4l = vec4<long double>;
 
+template <std::size_t N, typename Scalar>
+constexpr vec<N, Scalar> lerp(const vec<N, Scalar>& lhs, const vec<N, Scalar>& rhs, Scalar t) {
+    return lhs + (rhs - lhs) * t;
+}
+
+template <std::size_t N, typename Scalar>
+constexpr Scalar inv_lerp(const vec<N, Scalar>& start, const vec<N, Scalar>& end, const vec<N, Scalar>& in) {
+    for (int i = 0; i < N; ++i) {
+        if (start[i] != end[i])
+            return inv_lerp(start[i], end[i], in[i]);
+    }
+    return (Scalar)0;
+}
+
 // Linear Algebra
 template <std::size_t N, typename Scalar>
 constexpr vec<N, Scalar> dot(const vec<N, Scalar>& lhs, const vec<N, Scalar>& rhs) {
@@ -121,7 +134,6 @@ template <std::size_t N, typename Scalar>
 constexpr Scalar length(const vec<N, Scalar>& v) {
     return std::sqrt(length_sqr(v));
 }
-
 
 // unary arithmetic operators
 template <std::size_t N, typename Scalar>

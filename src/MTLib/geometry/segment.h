@@ -26,7 +26,7 @@ public:
     constexpr iterator end() noexcept { return endpoints.end(); }
 
 public:
-    constexpr segment() = default;
+    constexpr segment() { /* endpoints uninitialized */ }
     constexpr segment(std::array<vec<N, Scalar>, 2> ends) : endpoints(ends) {}
     constexpr segment(const vec<N, Scalar>& v1, const vec<N, Scalar>& v2)
         : endpoints({v1, v2})
@@ -40,12 +40,12 @@ public:
     constexpr const vec<N, Scalar>& operator[](std::size_t idx) const { return endpoints[idx]; }
 
     // lexicographic comparisons
-    constexpr bool operator==(const vec<N, Scalar>& rhs) const { return endpoints == rhs.endpoints; }
-    constexpr bool operator!=(const vec<N, Scalar>& rhs) const { return endpoints != rhs.endpoints; }
-    constexpr bool operator< (const vec<N, Scalar>& rhs) const { return endpoints <  rhs.endpoints; }
-    constexpr bool operator<=(const vec<N, Scalar>& rhs) const { return endpoints <= rhs.endpoints; }
-    constexpr bool operator> (const vec<N, Scalar>& rhs) const { return endpoints >  rhs.endpoints; }
-    constexpr bool operator>=(const vec<N, Scalar>& rhs) const { return endpoints >= rhs.endpoints; }
+    constexpr bool operator==(const segment<N, Scalar>& rhs) const { return endpoints == rhs.endpoints; }
+    constexpr bool operator!=(const segment<N, Scalar>& rhs) const { return endpoints != rhs.endpoints; }
+    constexpr bool operator< (const segment<N, Scalar>& rhs) const { return endpoints <  rhs.endpoints; }
+    constexpr bool operator<=(const segment<N, Scalar>& rhs) const { return endpoints <= rhs.endpoints; }
+    constexpr bool operator> (const segment<N, Scalar>& rhs) const { return endpoints >  rhs.endpoints; }
+    constexpr bool operator>=(const segment<N, Scalar>& rhs) const { return endpoints >= rhs.endpoints; }
 
 private:
     std::array<vec<N, Scalar>, 2> endpoints;
@@ -92,10 +92,7 @@ constexpr Scalar max_on_dim(const segment<N, Scalar>& seg, std::size_t dim) {
 
 template <std::size_t N, typename Scalar>
 constexpr vec<N, Scalar> evaluate_at_t(const segment<N, Scalar>& seg, Scalar t) {
-    vec<N, Scalar> v;
-    for (int i = 0; i < N; ++i)
-        v[i] = seg[0][i] + (seg[1][i] - seg[0][i]) * t;
-    return v;
+    return lerp(seg[0], seg[1], t);
 }
 
 }   // namespace mtlib
