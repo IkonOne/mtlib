@@ -30,6 +30,8 @@
         "functional": "cpp",
         "limits": "cpp",
         "optional": "cpp",
-        "__locale": "cpp"
+        "__locale": "cpp",
+        "cmath": "cpp",
+        "algorithm": "cpp"
     }
 }
