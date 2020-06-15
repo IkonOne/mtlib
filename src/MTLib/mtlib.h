@@ -12,5 +12,7 @@
 #include "geometry/segment.h"
 
 #include "intersection/intersect_segment_segment_2D.h"
+#include "intersection/intersect_segment_vec_2D.h"
+#include "intersection/intersect_segments_2D.h"
 
 #endif // _MTLIB_H_

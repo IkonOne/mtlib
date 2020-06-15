@@ -5,8 +5,11 @@
 
 #include <array>
 #include <algorithm>
+#include <cassert>
 #include <cstddef>  // size_t
 #include <initializer_list>
+#include <iostream>
+#include <utility>
 
 namespace mtlib {
 
@@ -93,6 +96,44 @@ constexpr Scalar max_on_dim(const segment<N, Scalar>& seg, std::size_t dim) {
 template <std::size_t N, typename Scalar>
 constexpr vec<N, Scalar> evaluate_at_t(const segment<N, Scalar>& seg, Scalar t) {
     return lerp(seg[0], seg[1], t);
+}
+
+/**
+ * if the slope does not exist (div by 0),
+ *  returns a positive number if y_1 < y_2, otherwise negative.
+ */
+template <typename Scalar>
+constexpr std::pair<Scalar, bool> slope_2D(const segment2<Scalar>& seg) {
+    auto dx = seg[1][0] - seg[0][0];
+    if (dx == (Scalar)0)
+        return std::make_pair(
+            seg[1][1] > seg[0][1] ? 1 : -1,
+            false
+        );
+    return std::make_pair((seg[1][1] - seg[0][1]) / dx, true);
+}
+
+template <typename Scalar>
+constexpr Scalar evaluate_at_x_2D(const segment2<Scalar>& seg, Scalar x) {
+    assert(seg[0][0] != seg[1][0]); // dx != 0
+    return lerp(
+        seg[0][1], seg[1][1],
+        inv_lerp(seg[0][0], seg[1][0], x)
+    );
+}
+
+template <typename Scalar>
+constexpr Scalar evaluate_at_y_2D(const segment2<Scalar>& seg, Scalar y) {
+    assert(seg[0][1] != seg[1][0]); // dy != 0
+    return lerp(
+        seg[0][0], seg[1][0],
+        inv_lerp(seg[0][1], seg[1][1], y)
+    );
+}
+
+template <std::size_t N, typename Scalar>
+constexpr std::ostream& operator<<(std::ostream &out, const segment<N, Scalar>& seg) {
+    return out << "{ " << seg[0] << ", " << seg[1] << " }";
 }
 
 }   // namespace mtlib

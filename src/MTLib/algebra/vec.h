@@ -5,6 +5,7 @@
 #include <cmath>
 #include <cstddef>  // size_t
 #include <functional>   // hash
+#include <iostream>
 #include <type_traits>  // enable_if
 #include <ratio>
 
@@ -98,7 +99,7 @@ constexpr vec<N, Scalar> lerp(const vec<N, Scalar>& lhs, const vec<N, Scalar>& r
 
 template <std::size_t N, typename Scalar>
 constexpr Scalar inv_lerp(const vec<N, Scalar>& start, const vec<N, Scalar>& end, const vec<N, Scalar>& in) {
-    for (int i = 0; i < N; ++i) {
+    for (std::size_t i = 0; i < N; ++i) {
         if (start[i] != end[i])
             return inv_lerp(start[i], end[i], in[i]);
     }
@@ -144,7 +145,7 @@ constexpr vec<N, Scalar> operator+(const vec<N, Scalar>& rhs) {
 template <std::size_t N, typename Scalar>
 constexpr vec<N, Scalar> operator-(const vec<N, Scalar>& rhs) {
     auto result = rhs;
-    for (int i = 0; i < N; ++i)
+    for (std::size_t i = 0; i < N; ++i)
         result[i] = -result[i];
     return result;
 }
@@ -158,7 +159,7 @@ constexpr vec<N, Scalar> operator+(const vec<N, Scalar>& lhs, const vec<N, Scala
 template <std::size_t N, typename Scalar>
 constexpr vec<N, Scalar> operator+=(const vec<N, Scalar>& lhs, const vec<N, Scalar>& rhs) {
     auto result = lhs;
-    for (int i = 0; i < N; ++i)
+    for (std::size_t i = 0; i < N; ++i)
         result[i] += rhs[i];
     return result;
 }
@@ -171,7 +172,7 @@ constexpr vec<N, Scalar> operator-(const vec<N, Scalar>& lhs, const vec<N, Scala
 template <std::size_t N, typename Scalar>
 constexpr vec<N, Scalar> operator-=(const vec<N, Scalar>& lhs, const vec<N, Scalar>& rhs) {
     auto result = lhs;
-    for (int i = 0; i < N; ++i)
+    for (std::size_t i = 0; i < N; ++i)
         result[i] -= rhs[i];
     return result;
 }
@@ -211,7 +212,7 @@ constexpr vec<N, Scalar> operator*(const vec<N, Scalar>& v, Scalar scalar) {
 template <std::size_t N, typename Scalar>
 constexpr vec<N, Scalar> operator*=(const vec<N, Scalar>& v, Scalar scalar) {
     auto result = v;
-    for (int i = 0; i < N; ++i)
+    for (std::size_t i = 0; i < N; ++i)
         result[i] *= scalar;
     return result;
 }
@@ -224,9 +225,22 @@ constexpr vec<N, Scalar> operator/(const vec<N, Scalar>& v, Scalar scalar) {
 template <std::size_t N, typename Scalar>
 constexpr vec<N, Scalar> operator/=(const vec<N, Scalar>& v, Scalar scalar) {
     auto result = v;
-    for (int i = 0; i < N; ++i)
+    for (std::size_t i = 0; i < N; ++i)
         result[i] /= scalar;
     return result;
+}
+
+template <std::size_t N, typename Scalar>
+constexpr std::ostream& operator<<(std::ostream& os, const vec<N, Scalar>& v) {
+    os << "{ ";
+    for (std::size_t i = 0; i < N; ++i) {
+        os << v[i];
+        if (i < N - 1)
+            os << ',';
+        os << ' ';
+    }
+    os << "}";
+    return os;
 }
 
 }   // namespace mtlib

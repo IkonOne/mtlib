@@ -37,7 +37,7 @@ void chull_graham_2d(const RandomIt& first, const RandomIt& last, const OutputIt
         // bottom hull
         result.push_back(cp[0]);
         result.push_back(cp[1]);
-        for (int i = 2; i < cp.size(); ++i) {
+        for (std::size_t i = 2; i < cp.size(); ++i) {
             result.push_back(cp[i]);
             while (result.size() > 2 && !is_ccw(result[result.size() - 3], result[result.size() - 2], result[result.size() - 1]))
                 result.erase(result.end() - 2);
