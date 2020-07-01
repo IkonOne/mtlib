@@ -6,6 +6,7 @@
 #include "algebra/vec.h"
 
 #include "comp_geo/convex_hull_2d.h"
+#include "comp_geo/half_edge_list_2d.h"
 #include "comp_geo/is_convex_2d.h"
 #include "comp_geo/overlap_convex_point_2d.h"
 

@@ -1,5 +1,5 @@
-#ifndef _MTLIB_ALGEBRA_VECTOR_H_
-#define _MTLIB_ALGEBRA_VECTOR_H_
+#ifndef _MTLIB_ALGEBRA_VEC_H_
+#define _MTLIB_ALGEBRA_VEC_H_
 
 #include <array>
 #include <cmath>
@@ -126,6 +126,11 @@ constexpr Scalar dot_perp(const vec2<Scalar>& lhs, const vec2<Scalar>& rhs) {
     return lhs[0] * rhs[1] - lhs[1] * rhs[0];
 }
 
+template <typename Scalar>
+constexpr Scalar pseudo_angle(const vec2<Scalar>& v) {
+    return pseudo_angle(v[0], v[1]);
+}
+
 template <std::size_t N, typename Scalar>
 constexpr Scalar length_sqr(const vec<N, Scalar>& v) {
     return dot(v, v);
@@ -245,4 +250,4 @@ constexpr std::ostream& operator<<(std::ostream& os, const vec<N, Scalar>& v) {
 
 }   // namespace mtlib
 
-#endif // _MTLIB_ALGEBRA_VECTOR_H_
+#endif // _MTLIB_ALGEBRA_VEC_H_
