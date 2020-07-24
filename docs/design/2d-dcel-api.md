@@ -1,3 +1,6 @@
+# Deprecated
+See decl-api.md
+
 # 2D Doubly Connected Edge List API Design Doc
 
 Note: This is a living (probably dead) document that is meant as a guide, not a contract.
@@ -16,7 +19,7 @@ This could be accomplished with a builder pattern with facade/flyweight for data
 ### TODO
 - [x] What does end() mean???
   - Figure it out.
-- [x] Can nested classes (vertex, half_edge, face) be flyweights so we can have different back end implementations???
+- [x] Can nested classes (vertex, incident, face) be flyweights so we can have different back end implementations???
   - Sure, but refactor after initial implementation if needed.
 - [x] Is there a predefined order (e.g. vertex can be ordered lexicographically on it's vector)
   - vertices
@@ -100,14 +103,14 @@ Doubly Connected Edge List
 
 [x] half_edges which have origin == vertex
 - ccw order
-- From half_edge w/ lexicographically smallest destination
+- From incident w/ lexicographically smallest destination
 
-[x] half_edge loop
+[x] incident loop
 - ccw order
-- From arbitrary half_edge
+- From arbitrary incident
 
 [x] each face
-- lexicographic order from outer half_edge
+- lexicographic order from outer incident
 
 
 ## API
@@ -128,13 +131,13 @@ Otherwise behaviour is undefined.
 #### Vertices
 - Vertices are ordered lexicographically.
 - No two verticies have the same coordinates.
-- The half_edge of a vertex is the half_edge which has the lexicographically smallest destination.
+- The incident of a vertex is the incident which has the lexicographically smallest destination.
 
 #### Half Edges
 - A half_edges source != it's destination.  Implied by "No two vertices have the same coordinates."
 
 #### Faces
-- The outer half_edge of a face is the half_edge which has the lexicographically smallest origin.
+- The outer incident of a face is the incident which has the lexicographically smallest origin.
 - The inner half_edges of a face are the half_edges with the lexicographically smallest origin in their half edge loop.
 - The inner half_edges of a face are sorted lexicographically by origin.
 
@@ -242,7 +245,7 @@ vertex_iterator get_vertex(const vec2<Scalar>&) const;
 ```cpp
 struct vertex {
   /*
-    returns the half_edge with the lexocographically smallest destination.
+    returns the incident with the lexocographically smallest destination.
   */
   half_edge_vertex_iterator begin();
   half_edge_vertex_iterator end();
@@ -250,13 +253,13 @@ struct vertex {
   half_edge_vertex_iterator rend();
 
   const vec2<Scalar> point() const;
-  const half_edge& half_edge() const;
+  const incident& incident() const;
   ref<VertexData> data();
 }
 
-struct half_edge {
+struct incident {
   /*
-    iterators that access the edge loop from this half_edge
+    iterators that access the edge loop from this incident
   */
   half_edge_loop_iterator begin();
   half_edge_loop_iterator end();
@@ -264,15 +267,51 @@ struct half_edge {
   half_edge_loop_iterator rend();
 
   const vertex& origin() const;
-  const half_edge& twin() const;
-  const half_edge& next() const;
-  const half_edge& prev() const;
+  const incident& twin() const;
+  const incident& next() const;
+  const incident& prev() const;
   const face& face() const;
   ref<HalfEdgeData> data();
 }
 
 struct face {
-  const half_edge& outer() const;
-  const set<ref<half_edge>>& inner() const;
+  const incident& outer() const;
+  const set<ref<incident>>& inner() const;
 }
 ```
+
+### Post-Mortem
+
+This didn't work.  There were some critical questions that I didnt ask when designing this API:
+
+- Is it important that the construction of the half_edge_list is easy?
+- Does the order of the member vertices/half_edges/faces matter?
+
+##### Is it important that the construction of the half_edge_list is easy?
+
+This is programming.  Tedium is part of the game.
+
+The approach that I took was one where I was trying to make it completely brain-dead to construct a half edge list/dcel 
+by letting the user of the api simply add edges arbitrarily.  This is not what will generally be happening in reality.  
+I think.
+
+What I do know is that trying to cover all of the edge cases that that approach forces on the developer difficult.  It also
+requires the dev to make consessions on what does or does not enable the add_edge function to maintain an invariant that
+the dcel is always correct.  These concessions would live in documentation and error messages which is less than ideal.  
+It would be better for a single function to perform a single, specific operation with a simple invariant.  As is, add_edges
+is trying to do too much overcomplicated.
+
+##### Does the order of the member vertices/half_edges/faces matter?
+
+In most cases, I don't think that it does.  Most operations involving half_edge_lists are going to be one and done or 
+the user will know that a specific order is required and they can add it that way themselves.  So letting the developer
+worry strictly about a simple, efficient api and leaving fanciness to the user will ensure a more robust code base.
+
+#### Take-Aways
+
+- Single Responsibility Principle.
+  - Having a basic and functioning half_edge_list that simply manages the data is enough for a single class.
+  - Fanciness can be added by inheritors/decorators.
+- Ask _WHY_.
+  - Do the managed items really need to be stored in sorted order?  Why?
+  - Is it better for the memory of the data members to be contiguous?  Why?
