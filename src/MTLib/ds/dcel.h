@@ -85,6 +85,9 @@ public:
     struct half_edge_loop_iterator;
     using half_edge_loop_reverse_iterator = std::reverse_iterator<half_edge_loop_iterator>;
 
+    struct vertex_incident_iterator;
+    using vertex_incident_reverse_iterator = std::reverse_iterator<vertex_incident_iterator>;
+
 public:
     static constexpr vertex* null_vertex = nullptr;
     static constexpr half_edge* null_half_edge = nullptr;
@@ -171,6 +174,22 @@ public:
         return std::make_reverse_iterator(half_edge_loop_begin(he));
     }
 
+    vertex_incident_iterator vertex_incident_begin(half_edge* incident) const {
+        return vertex_incident_iterator(incident);
+    }
+
+    vertex_incident_iterator vertex_incident_end(half_edge* incident) const {
+        return vertex_incident_iterator(incident, true);
+    }
+
+    vertex_incident_reverse_iterator vertex_incident_rbegin(half_edge* incident) const {
+        return std::make_reverse_iterator(vertex_incident_end(incident));
+    }
+
+    vertex_incident_reverse_iterator vertex_incident_rend(half_edge* incident) const {
+        return std::make_reverse_iterator(vertex_incident_begin(incident));
+    }
+
 private:
     vertex_container vertices_;
     half_edge_container half_edges_;
@@ -215,6 +234,52 @@ public:
         }
 
         bool operator!=(const half_edge_loop_iterator& other) const {
+            return he_ != other.he_;
+        }
+
+    private:
+        const half_edge* first_;
+        half_edge* he_;
+    };
+
+    struct vertex_incident_iterator {
+        using iterator_category = std::bidirectional_iterator_tag;
+        using value_type = half_edge;
+        using difference_type = std::size_t;
+        using pointer = value_type*;
+        using reference = value_type&;
+
+        vertex_incident_iterator() = delete;
+
+        vertex_incident_iterator(half_edge* he, bool is_end = false)
+            : first_(he), he_(is_end ? nullptr : he)
+        { }
+
+        vertex_incident_iterator& operator++() {
+            if (he_ != nullptr)
+                he_ = he_->twin->next == first_ ? nullptr : he_->twin->next;
+            return *this;
+        }
+
+        vertex_incident_iterator& operator--() {
+            if (he_ != first_)
+                he_ = he_ == nullptr ? first_->prev->twin : he_->prev->twin;
+            return *this;
+        }
+
+        half_edge& operator*() const {
+            return *he_;
+        }
+
+        half_edge* operator->() const {
+            return he_;
+        }
+
+        bool operator==(const vertex_incident_iterator& other) const {
+            return he_ == other.he_;
+        }
+
+        bool operator!=(const vertex_incident_iterator& other) const {
             return he_ != other.he_;
         }
 

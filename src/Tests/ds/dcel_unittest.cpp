@@ -158,3 +158,29 @@ TEST_F(DCELIteratorsTest, HalfEdgeLoopReverseIterator) {
     EXPECT_EQ(it_end, ++it);
     EXPECT_NE(it_begin, it);
 }
+
+TEST_F(DCELIteratorsTest, VertexIncidientIterator) {
+    auto v1 = vertices[0];
+    auto it = d.vertex_incident_begin(v1->incident);
+    auto it_begin = d.vertex_incident_begin(v1->incident);
+    auto it_end = d.vertex_incident_end(v1->incident);
+
+    EXPECT_EQ(it_begin, it);
+    EXPECT_EQ(*inner_half_edges[0], *(it));
+    EXPECT_EQ(*outer_half_edges[0], *(++it));
+    EXPECT_EQ(it_end, ++it);
+    EXPECT_NE(it_begin, it);
+}
+
+TEST_F(DCELIteratorsTest, VertexIncidientReverseIterator) {
+    auto v1 = vertices[1];
+    auto it = d.vertex_incident_rbegin(v1->incident);
+    auto it_begin = d.vertex_incident_rbegin(v1->incident);
+    auto it_end = d.vertex_incident_rend(v1->incident);
+
+    EXPECT_EQ(it_begin, it);
+    EXPECT_EQ(*outer_half_edges[1], *(it));
+    EXPECT_EQ(*inner_half_edges[1], *(++it));
+    EXPECT_EQ(it_end, ++it);
+    EXPECT_NE(it_begin, it);
+}
