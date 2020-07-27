@@ -9,6 +9,7 @@
 
 #include <algorithm>
 #include <functional> // reference_wrapper
+#include <iterator> // (make_)reverse_iterator
 #include <cstddef> // size_t
 #include <list> // using lists since removal is the only time references are invalidated
 
@@ -31,6 +32,14 @@ struct dcel_half_edge {
     typename Traits::half_edge* next = nullptr;
     typename Traits::half_edge* prev = nullptr;
     typename Traits::face* face = nullptr;
+
+    constexpr bool operator==(const dcel_half_edge& other) const {
+        return origin == other.origin &&
+            twin == other.twin &&
+            next == other.next &&
+            prev == other.prev &
+            face == other.face;
+    }
 };
 
 template<typename Traits>
@@ -72,6 +81,9 @@ public:
     using face_container = typename Traits::face_container;
     using faces_iterator = typename Traits::faces_iterator;
     using faces_reverse_iterator = typename Traits::faces_reverse_iterator;
+
+    struct half_edge_loop_iterator;
+    using half_edge_loop_reverse_iterator = std::reverse_iterator<half_edge_loop_iterator>;
 
 public:
     static constexpr vertex* null_vertex = nullptr;
@@ -143,10 +155,73 @@ public:
     constexpr faces_reverse_iterator faces_rbegin() { return faces_.rbegin(); }
     constexpr faces_reverse_iterator faces_rend() { return faces_.rend(); }
 
+    half_edge_loop_iterator half_edge_loop_begin(half_edge* he) const {
+        return half_edge_loop_iterator(he);
+    }
+
+    half_edge_loop_iterator half_edge_loop_end(half_edge* he) const {
+        return half_edge_loop_iterator(he, true);
+    }
+
+    half_edge_loop_reverse_iterator half_edge_loop_rbegin(half_edge* he) const {
+        return std::make_reverse_iterator(half_edge_loop_end(he));
+    }
+
+    half_edge_loop_reverse_iterator half_edge_loop_rend(half_edge* he) const {
+        return std::make_reverse_iterator(half_edge_loop_begin(he));
+    }
+
 private:
     vertex_container vertices_;
     half_edge_container half_edges_;
     face_container faces_;
+
+public:
+    struct half_edge_loop_iterator {
+        using iterator_category = std::bidirectional_iterator_tag;
+        using value_type = half_edge;
+        using difference_type = std::size_t;
+        using pointer = value_type*;
+        using reference = value_type&;
+
+        half_edge_loop_iterator() = delete;
+
+        half_edge_loop_iterator(half_edge* first, bool is_end = false)
+            : first_(first), he_(is_end ? nullptr : first)
+        { }
+
+        half_edge_loop_iterator& operator++() {
+            if (he_ != nullptr)
+                he_ = he_->next != first_ ? he_->next : nullptr;
+            return *this;
+        }
+
+        half_edge_loop_iterator& operator--() {
+            if (he_ != first_)
+                he_ = he_ == nullptr ? first_->prev : he_->prev;
+            return *this;
+        }
+
+        half_edge& operator*() const {
+            return *he_;
+        }
+
+        half_edge* operator->() const {
+            return he_;
+        }
+
+        bool operator==(const half_edge_loop_iterator& other) const {
+            return he_ == other.he_;
+        }
+
+        bool operator!=(const half_edge_loop_iterator& other) const {
+            return he_ != other.he_;
+        }
+
+    private:
+        const half_edge* first_;
+        half_edge* he_;
+    };
 };
 
 } // ds
