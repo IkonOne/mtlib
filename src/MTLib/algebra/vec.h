@@ -12,7 +12,7 @@
 namespace mtlib {
 
 template <std::size_t N, typename Scalar>
-class vec {
+class vec : public std::array<Scalar, N> {
 
 template <std::size_t LHS, std::size_t RHS>
 struct dim_size_equal {
@@ -26,16 +26,16 @@ public:
 
 public:
     constexpr vec() { /* vals uninitialized */ }
-    constexpr vec(std::array<Scalar, N> l)
-        : vals(l)
-    {}
+//    constexpr vec(std::array<Scalar, N> l)
+//        : std::array(l)
+//    {}
 
     // vec2 constructor
     template <std::size_t Dim = N>
     constexpr vec(const Scalar& s1, const Scalar& s2,
         typename std::enable_if< dim_size_equal<Dim, 2>::value >::type* = 0
     )
-        : vals({ s1, s2 })
+        : std::array<Scalar, N>({ s1, s2 })
     { }
 
     // vec3 constructor
@@ -43,7 +43,7 @@ public:
     constexpr vec(const Scalar& s1, const Scalar& s2, const Scalar& s3,
         typename std::enable_if< dim_size_equal<Dim, 3>::value >::type* = 0
     )
-        : vals({ s1, s2, s3 })
+        : std::array<Scalar, N>({ s1, s2, s3 })
     { }
 
     // vec4 constructor
@@ -51,26 +51,8 @@ public:
     constexpr vec(const Scalar& s1, const Scalar& s2, const Scalar& s3, const Scalar& s4,
         typename std::enable_if< dim_size_equal<Dim, 4>::value >::type* = 0
     )
-        : vals({ s1, s2, s3, s4 })
+        : std::array<Scalar, N>({ s1, s2, s3, s4 })
     { }
-
-    // accessors
-    constexpr Scalar& at(std::size_t idx) { return vals.at(idx); }
-    constexpr const Scalar& at(std::size_t idx) const { return vals.at(idx); }
-
-    constexpr Scalar& operator[](std::size_t idx) { return vals[idx]; }
-    constexpr const Scalar& operator[](std::size_t idx) const { return vals[idx]; }
-
-    // lexicographic comparisons
-    constexpr bool operator==(const vec& rhs) const { return vals == rhs.vals; }
-    constexpr bool operator!=(const vec& rhs) const { return vals != rhs.vals; }
-    constexpr bool operator< (const vec& rhs) const { return vals <  rhs.vals; }
-    constexpr bool operator<=(const vec& rhs) const { return vals <= rhs.vals; }
-    constexpr bool operator> (const vec& rhs) const { return vals >  rhs.vals; }
-    constexpr bool operator>=(const vec& rhs) const { return vals >= rhs.vals; }
-
-private:
-    std::array<Scalar, N> vals;
 };
 
 // common specializations
