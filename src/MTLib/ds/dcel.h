@@ -37,7 +37,7 @@ struct dcel_half_edge {
         return origin == other.origin &&
             twin == other.twin &&
             next == other.next &&
-            prev == other.prev &
+            prev == other.prev &&
             face == other.face;
     }
 };
