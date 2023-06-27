@@ -17,4 +17,6 @@
 #include "intersection/intersect_segment_vec_2D.h"
 #include "intersection/intersect_segments_2D.h"
 
+#include "util/svg.h"
+
 #endif // _MTLIB_H_

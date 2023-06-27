@@ -5,7 +5,7 @@
 #ifndef MTLIB_DCEL_H
 #define MTLIB_DCEL_H
 
-#include "MTLib/algebra/vec.h"
+#include "../algebra/vec.h"
 
 #include <algorithm>
 #include <functional> // reference_wrapper
