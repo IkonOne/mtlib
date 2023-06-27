@@ -77,7 +77,7 @@ float svg::stroke_width = 0.5f;
 float svg::point_size = 1.3f;
 std::string svg::fill_color = "#00695C11";
 std::string svg::stroke_color = "black";
-std::string svg::point_color = "#EF5350FF";
+std::string svg::point_color = "black";
 std::stringstream svg::_ss;
 
 }
